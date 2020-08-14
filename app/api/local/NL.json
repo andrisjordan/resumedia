@@ -1,0 +1,8 @@
+{
+    "firstname": "voornaam",
+    "lastname": "achternaam",
+    "phone_number": "telefoonnummer",
+    "email": "email",
+    "education": "opleiding",
+    "experience": "ervaring"
+}

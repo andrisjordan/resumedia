@@ -1,0 +1,10 @@
+/node_modules
+/app/catImList/catImList.json
+/app/uploads/**.jpg
+/app/uploads/**.png
+/app/compressed/**.jpg
+/app/compressed/**.png
+/app/log/**
+/app/reports/**.pdf
+/app/invoices/**.pdf
+/app/stickers/**.pdf
