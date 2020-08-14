@@ -72,8 +72,8 @@ describe('User Endpoints', function () {
             .get('/user/' + id)
             .set('Accept', 'application/json')
             .set('Authorization', 'bearer ' + token)
+            .expect(200)
             .then(response => {
-                expect(response.status)
                 done()
             })
     });
