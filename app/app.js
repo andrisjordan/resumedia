@@ -16,7 +16,7 @@ if (process.env.NODE_ENV == "test") {
   mongoose.connect('mongodb://mongo:' + port + '/' + database);
 }
 
-if(!process.env.NODE_ENV == "test"){
+if(process.env.NODE_ENV != "test"){
   app.use(morgan("dev"));
 }
 app.use(bodyParser.urlencoded({
@@ -57,7 +57,7 @@ app.use((error, req, res, next) => {
 
 const portserver = 5000;
 var server
-if(!process.env.NODE_ENV == "test"){
+if(process.env.NODE_ENV != "test"){
   server = http.createServer(app).listen(portserver);
 } else {
   server = http.createServer(app);
