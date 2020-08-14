@@ -3,6 +3,8 @@
     "lastname": "last name",
     "phone_number": "phone number",
     "email": "email",
+    "place": "place",
     "education": "education",
-    "experience": "experience"
+    "experience": "experience",
+    "present": "present"
 }

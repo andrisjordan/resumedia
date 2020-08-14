@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const multer = require('multer');
 const UserControllerV1 = require('../controllers/v1/user');
 var routesVersioning = require('express-routes-versioning')();
 const checkAuth = require('../middleware/check-auth');

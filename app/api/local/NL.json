@@ -3,6 +3,8 @@
     "lastname": "achternaam",
     "phone_number": "telefoonnummer",
     "email": "email",
+    "place": "place",
     "education": "opleiding",
-    "experience": "ervaring"
+    "experience": "ervaring",
+    "present": "heden"
 }

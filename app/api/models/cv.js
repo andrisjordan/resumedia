@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
 
-const userSchema = new accountSchema({
+const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     eduactions: [{
         start_date: {
             type: Date,
@@ -52,4 +57,4 @@ const userSchema = new accountSchema({
     }],
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Cv', userSchema);

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const userSchema = new accountSchema({
+const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     email: {
         type: String,
@@ -17,15 +17,17 @@ const userSchema = new accountSchema({
             } else {
                 return v
             }
-        }
+        },
+        required: true
     },
     gender: {
         type: String,
-        required: false,
+        required: true,
         enum: ["M", "F"]
     },
     language: {
         type: String,
+        required: true
     },
     place: {
         type: String,
