@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const User = require("../../models/user");
+const cvFunctions = require("../../global/cvFunction")
 
 exports.user_signup = async (req, res, next) => {
   try {
@@ -14,7 +15,9 @@ exports.user_signup = async (req, res, next) => {
       password,
       lastName,
       phoneNumber,
-      language
+      language,
+      educations,
+      experiences
     } = req.body
 
     if (
@@ -55,6 +58,8 @@ exports.user_signup = async (req, res, next) => {
       gender: gender,
       phoneNumber: phoneNumber,
       language: language,
+      educations: educations || [],
+      experiences: experiences || [],
     });
     await user.save()
     res.status(200).json({
@@ -171,6 +176,30 @@ exports.user_delete = async (req, res, next) => {
       res.status(200).json({
         message: "user deleted",
       });
+    } catch (e) {
+      console.log(e);
+      res.status(500).json({
+        message: "error"
+      });
+    }
+  } else {
+    return res.status(401).json({
+      message: "unathorized"
+    });
+  }
+};
+
+exports.user_export_cv = async (req, res, next) => {
+  if (req.userData.userId == req.params.userId) {
+    try {
+      const id = req.params.userId;
+      const user = await User.findById(id)
+      await cvFunctions.exportCV(user)
+      var filename = './app/cv/' + user._id + '.pdf'
+      var file = fs.readFileSync(filename)
+      res.contentType('application/pdf');
+      res.send(file);
+      fs.unlinkSync(filename)
     } catch (e) {
       console.log(e);
       res.status(500).json({

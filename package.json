@@ -4,14 +4,19 @@
   "description": "Resumedia Assignment",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./app/server.js"
+    "test": "cross-env NODE_ENV=test JWT_KEY=secret jest --testTimeout=10000 --detectOpenHandles",
+    "start": "nodemon ./app/app.js"
   },
   "keywords": [
     "node",
     "restful",
     "api"
   ],
+  "jest": {
+    "verbose": true,
+    "bail": 1,
+    "testEnvironment": "node"
+  },
   "author": "Andras Demszky",
   "license": "MIT",
   "dependencies": {
@@ -20,6 +25,7 @@
     "bcrypt": "^4.0.1",
     "bluebird": "^3.7.2",
     "body-parser": "^1.18.2",
+    "cross-env": "^7.0.2",
     "dateformat": "^3.0.3",
     "express": "^4.16.2",
     "express-api-versioning": "^2.0.0",

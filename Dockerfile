@@ -7,11 +7,8 @@ RUN npm install
 COPY . /app
 WORKDIR /app
 
-RUN echo "#!/bin/bash" > /app/migrate.sh && chmod +x /app/migrate.sh
-RUN echo "#!/bin/bash" > /usr/local/bin/start && chmod +x /usr/local/bin/start
-
 ENV PATH=/node_modules/.bin:$PATH
 
-EXPOSE 80
+EXPOSE 5000
 
 CMD ["npm", "start"]

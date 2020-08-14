@@ -4,15 +4,21 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const userRoutes = require('./api/routes/user');
-const cvRoutes = require('./api/routes/cv');
+const http = require('http');
 
 
 const database = "resume"
 const port = "27017"
 
-mongoose.connect('mongodb://127.0.0.1:' + port + '/' + database);
+if (process.env.NODE_ENV == "test") {
+  mongoose.connect('mongodb://localhost:' + port + '/' + database);
+} else {
+  mongoose.connect('mongodb://mongo:' + port + '/' + database);
+}
 
-app.use(morgan("dev"));
+if(!process.env.NODE_ENV == "test"){
+  app.use(morgan("dev"));
+}
 app.use(bodyParser.urlencoded({
   extended: false
 }));
@@ -33,7 +39,6 @@ app.use((req, res, next) => {
 
 // Routes which should handle requests
 app.use("/user", userRoutes);
-app.use("/cv", cvRoutes);
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
@@ -50,4 +55,12 @@ app.use((error, req, res, next) => {
   });
 });
 
-module.exports = app;
+const portserver = 5000;
+var server
+if(!process.env.NODE_ENV == "test"){
+  server = http.createServer(app).listen(portserver);
+} else {
+  server = http.createServer(app);
+}
+
+module.exports = server;

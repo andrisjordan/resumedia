@@ -6,7 +6,7 @@ var options = {
     footer: {
         "height": "28mm",
         "contents": {
-            default: '<div style="width: 100%; text-align: center;"><span style="color: #444; font-size: 12px;">{{page}}</span>/<span style="font-size: 12px;">{{pages}}</span></div>', // fallback value
+            default: '<div style="width: 100%; text-align: center;"></div>', // fallback value
         }
     },
     header: {
@@ -23,7 +23,7 @@ const experience = '<div style="color:#393d47;font-family:Arial, Helvetica Neue,
 
 
 module.exports = {
-    exportCV: function (user, cv) {
+    exportCV: function (user) {
         var html = fs.readFileSync(__dirname + "/cvTemplate.html")
         if (html) {
             html = html.toString()
@@ -49,49 +49,56 @@ module.exports = {
             html = html.replace("{{experience_lang}}", cvTitles.experience)
 
             var alleducations = ""
-            for (var eduInd = 0; eduInd < cv.educations.length; eduInd++) {
-                var startDate =  new Date(cv.educations[eduInd].start_date)
-                var endDate 
+            for (var eduInd = 0; eduInd < user.educations.length; eduInd++) {
+                var startDate = new Date(user.educations[eduInd].start_date)
+                var endDate
                 var endDateString
-                if(cv.educations[eduInd].end_date_present){
+                if (user.educations[eduInd].end_date_present) {
                     endDateString = cvTitles.present
                 } else {
-                    endDate =  new Date(cv.educations[eduInd].end_date)
-                    endDateString = endDate.getMonth() + 1 + "/" + endDate.getFullYear
+                    endDate = new Date(user.educations[eduInd].end_date)
+                    endDateString = monthWithZero(endDate) + " / " + endDate.getFullYear()
                 }
-                var startDateString = startDate.getMonth() + 1 + "/" + startDate.getFullYear
-                const currentEducation = education.replace("{{start_date}}", startDateString).replace("{{end_date}}", endDateString).replace("{{study}}", cv.educations[eduInd].study).replace("{{description}}", cv.educations[eduInd].description).replace("{{school_name}}", cv.experiences[eduInd].school_name)
+                var startDateString = monthWithZero(startDate) + " / " + startDate.getFullYear()
+                const currentEducation = education.replace("{{start_date}}", startDateString).replace("{{end_date}}", endDateString).replace("{{study}}", user.educations[eduInd].study).replace("{{description}}", user.educations[eduInd].description).replace("{{school_name}}", user.educations[eduInd].school_name)
                 alleducations += currentEducation
             }
 
             var allexperiences = ""
-            for (var eduInd = 0; eduInd < cv.experiences.length; eduInd++) {
-                var startDate =  new Date(cv.experiences[eduInd].start_date)
-                var endDate 
+            for (var eduInd = 0; eduInd < user.experiences.length; eduInd++) {
+                var startDate = new Date(user.experiences[eduInd].start_date)
+                var endDate
                 var endDateString
-                if(cv.experiences[eduInd].end_date_present){
+                if (user.experiences[eduInd].end_date_present) {
                     endDateString = cvTitles.present
                 } else {
-                    endDate =  new Date(cv.experiences[eduInd].end_date)
-                    endDateString = endDate.getMonth() + 1 + "/" + endDate.getFullYear
+                    endDate = new Date(user.experiences[eduInd].end_date)
+                    endDateString = monthWithZero(endDate) + " / " + endDate.getFullYear()
                 }
-                var startDateString = startDate.getMonth() + 1 + "/" + startDate.getFullYear
-                const currentExp = experience.replace("{{start_date}}", startDateString).replace("{{end_date}}", endDateString).replace("{{function}}", cv.experiences[eduInd].study).replace("{{description}}", cv.experiences[eduInd].description).replace("{{company_name}}", cv.experiences[eduInd].company_name)
+                var startDateString = monthWithZero(startDate) + " / " + startDate.getFullYear()
+                const currentExp = experience.replace("{{start_date}}", startDateString).replace("{{end_date}}", endDateString).replace("{{function}}", user.experiences[eduInd].function).replace("{{description}}", user.experiences[eduInd].description).replace("{{company_name}}", user.experiences[eduInd].company_name)
                 allexperiences += currentExp
             }
 
             html = html.replace("{{experiences}}", allexperiences)
             html = html.replace("{{educations}}", alleducations)
 
-            var filename = './app/cv/' + cv._id + '.pdf'
+            var filename = './app/cv/' + user._id + '.pdf'
             options.filename = filename
 
             return pdf.createAsync(html, options)
 
         } else {
             console.log(err)
-            return new Promise((resolve, reject) => { reject(false) })
+            return new Promise((resolve, reject) => {
+                reject(false)
+            })
         }
     }
 
+}
+
+function monthWithZero(date) {
+    var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1
+    return month
 }
