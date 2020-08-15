@@ -17,16 +17,17 @@ var options = {
     }
 };
 
-const education = '<div style="color:#393d47;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;line-height:1.2;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;"><div style="line-height: 1.2; font-size: 12px; color: #393d47; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; mso-line-height-alt: 14px;"><p style="font-size: 14px; line-height: 1.2; word-break: break-word; mso-line-height-alt: 17px; margin: 0;">&nbsp;</p><p style="font-size: 14px; line-height: 1.2; word-break: break-word; mso-line-height-alt: 17px; margin: 0;"><span style="font-size: 14px;">{{school_name}} | {{start_date}} - {{end_date}}</span></p><p style="font-size: 14px; line-height: 1.2; word-break: break-word; mso-line-height-alt: 17px; margin: 0;"><strong><span style="font-size: 14px;">{{study}}</span></strong></p><p style="font-size: 14px; line-height: 1.2; word-break: break-word; mso-line-height-alt: 17px; margin: 0;"><span style="font-size: 14px;">{{description}}</span></p><p style="font-size: 14px; line-height: 1.2; word-break: break-word; mso-line-height-alt: 17px; margin: 0;">&nbsp;</p></div></div>'
-
-const experience = '<div style="color:#393d47;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;line-height:1.2;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;"><div style="line-height: 1.2; font-size: 12px; color: #393d47; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; mso-line-height-alt: 14px;"><p style="font-size: 14px; line-height: 1.2; word-break: break-word; mso-line-height-alt: 17px; margin: 0;">&nbsp;</p><p style="font-size: 14px; line-height: 1.2; word-break: break-word; mso-line-height-alt: 17px; margin: 0;"><span style="font-size: 14px;">{{company_name}} | {{start_date}} - {{end_date}}</span></p><p style="font-size: 14px; line-height: 1.2; word-break: break-word; mso-line-height-alt: 17px; margin: 0;"><strong><span style="font-size: 14px;">{{function}}</span></strong></p><p style="font-size: 14px; line-height: 1.2; word-break: break-word; mso-line-height-alt: 17px; margin: 0;"><span style="font-size: 14px;">{{description}}</span></p><p style="font-size: 14px; line-height: 1.2; word-break: break-word; mso-line-height-alt: 17px; margin: 0;">&nbsp;</p></div></div>'
-
 
 module.exports = {
-    exportCV: function (user) {
-        var html = fs.readFileSync(__dirname + "/cvTemplate.html")
+    exportCV: function (user, template) {
+        var html = fs.readFileSync(__dirname + "/" + template + "/" + template + ".html")
+        var htmledu = fs.readFileSync(__dirname + "/" + template + "/" + template + "Edu.html")
+        var htmlexp = fs.readFileSync(__dirname + "/" + template + "/" + template + "Exp.html")
         if (html) {
             html = html.toString()
+
+            const education = htmledu.toString()
+            const experience = htmlexp.toString()
 
             var cvTitles
 
@@ -48,37 +49,9 @@ module.exports = {
             html = html.replace("{{education_lang}}", cvTitles.education)
             html = html.replace("{{experience_lang}}", cvTitles.experience)
 
-            var alleducations = ""
-            for (var eduInd = 0; eduInd < user.educations.length; eduInd++) {
-                var startDate = new Date(user.educations[eduInd].start_date)
-                var endDate
-                var endDateString
-                if (user.educations[eduInd].end_date_present) {
-                    endDateString = cvTitles.present
-                } else {
-                    endDate = new Date(user.educations[eduInd].end_date)
-                    endDateString = monthWithZero(endDate) + " / " + endDate.getFullYear()
-                }
-                var startDateString = monthWithZero(startDate) + " / " + startDate.getFullYear()
-                const currentEducation = education.replace("{{start_date}}", startDateString).replace("{{end_date}}", endDateString).replace("{{study}}", user.educations[eduInd].study).replace("{{description}}", user.educations[eduInd].description).replace("{{school_name}}", user.educations[eduInd].school_name)
-                alleducations += currentEducation
-            }
+            var alleducations = insertElements(user.educations, cvTitles, education, "edu")
 
-            var allexperiences = ""
-            for (var eduInd = 0; eduInd < user.experiences.length; eduInd++) {
-                var startDate = new Date(user.experiences[eduInd].start_date)
-                var endDate
-                var endDateString
-                if (user.experiences[eduInd].end_date_present) {
-                    endDateString = cvTitles.present
-                } else {
-                    endDate = new Date(user.experiences[eduInd].end_date)
-                    endDateString = monthWithZero(endDate) + " / " + endDate.getFullYear()
-                }
-                var startDateString = monthWithZero(startDate) + " / " + startDate.getFullYear()
-                const currentExp = experience.replace("{{start_date}}", startDateString).replace("{{end_date}}", endDateString).replace("{{function}}", user.experiences[eduInd].function).replace("{{description}}", user.experiences[eduInd].description).replace("{{company_name}}", user.experiences[eduInd].company_name)
-                allexperiences += currentExp
-            }
+            var allexperiences = insertElements(user.experiences, cvTitles, experience, "exp")
 
             html = html.replace("{{experiences}}", allexperiences)
             html = html.replace("{{educations}}", alleducations)
@@ -101,4 +74,28 @@ module.exports = {
 function monthWithZero(date) {
     var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1
     return month
+}
+
+function insertElements(elements, cvTitles, html, type){
+    var all = ""
+    for (var ind = 0; ind < elements.length; ind++) {
+        var startDate = new Date(elements[ind].start_date)
+        var endDate
+        var endDateString
+        if (elements[ind].end_date_present) {
+            endDateString = cvTitles.present
+        } else {
+            endDate = new Date(elements[ind].end_date)
+            endDateString = monthWithZero(endDate) + " / " + endDate.getFullYear()
+        }
+        var startDateString = monthWithZero(startDate) + " / " + startDate.getFullYear()
+        var current
+        if(type == "edu"){
+            current = html.replace("{{start_date}}", startDateString).replace("{{end_date}}", endDateString).replace("{{study}}", elements[ind].study).replace("{{description}}", elements[ind].description).replace("{{school_name}}", elements[ind].school_name)
+        } else {
+            current = html.replace("{{start_date}}", startDateString).replace("{{end_date}}", endDateString).replace("{{function}}", elements[ind].function).replace("{{description}}", elements[ind].description).replace("{{company_name}}", elements[ind].company_name)
+        }
+        all += current
+    }
+    return all
 }

@@ -193,8 +193,9 @@ exports.user_export_cv = async (req, res, next) => {
   if (req.userData.userId == req.params.userId) {
     try {
       const id = req.params.userId;
+      const template = req.body.template;
       const user = await User.findById(id)
-      await cvFunctions.exportCV(user)
+      await cvFunctions.exportCV(user, template)
       var filename = './app/cv/' + user._id + '.pdf'
       var file = fs.readFileSync(filename)
       res.contentType('application/pdf');

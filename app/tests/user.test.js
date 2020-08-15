@@ -79,7 +79,10 @@ describe('User Endpoints', function () {
     });
     it('create cv', function (done) {
         request(app)
-            .get('/user/export/' + id)
+            .post('/user/export/' + id)
+            .send({
+                "template": "cvTemplate",
+            })
             .set('Accept', 'application/json')
             .set('Authorization', 'bearer ' + token)
             .expect(200, done)
