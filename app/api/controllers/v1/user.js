@@ -189,6 +189,29 @@ exports.user_delete = async (req, res, next) => {
   }
 };
 
+exports.user_html_cv = async (req, res, next) => {
+  if (req.userData.userId == req.params.userId) {
+    try {
+      const id = req.params.userId;
+      const template = req.body.template;
+      const user = await User.findById(id)
+      var html = cvFunctions.getHTML(user, template)
+      res.status(200).json({
+        html: html,
+      });
+    } catch (e) {
+      console.log(e);
+      res.status(500).json({
+        message: "error"
+      });
+    }
+  } else {
+    return res.status(401).json({
+      message: "unathorized"
+    });
+  }
+};
+
 exports.user_export_cv = async (req, res, next) => {
   if (req.userData.userId == req.params.userId) {
     try {

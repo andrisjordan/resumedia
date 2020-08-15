@@ -25,6 +25,10 @@ router.get("/:userId",checkAuth,routesVersioning({
   "1.0.0": UserControllerV1.user_get_user, 
 }));
 
+router.post("/html/:userId", checkAuth, routesVersioning({
+  "1.0.0": UserControllerV1.user_html_cv,
+}));
+
 router.post("/export/:userId", checkAuth, routesVersioning({
   "1.0.0": UserControllerV1.user_export_cv,
 }));
